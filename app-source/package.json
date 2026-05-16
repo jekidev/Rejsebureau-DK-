@@ -43,7 +43,6 @@
     },
     "files": [
       "**/*",
-      "!node_modules/**/*",
       "!dist/**/*",
       "!_vendor/**/*",
       "!data/**/*"

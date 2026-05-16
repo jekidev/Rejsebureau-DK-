@@ -247,7 +247,7 @@ app.whenReady().then(() => {
   createWindow();
 
   // Auto-update is only meaningful for packaged apps (GitHub releases).
-  if (app.isPackaged) {
+  if (app.isPackaged && process.env.TGM_ENABLE_AUTO_UPDATE === '1') {
     setupAutoUpdater({
       sendStatus: (st) => sendToRenderer('update-status', st),
       onDownloaded: () => {
