@@ -33,4 +33,12 @@ The build system will package that application into a normal Windows installer.
 
 ## Current status
 
-Repository initialized for installer work.
+The recovered customer app source is in `app-source/`.
+
+GitHub Actions builds one normal NSIS Windows setup wizard:
+
+```text
+Telegram_Group_Messenger_Premium_Setup.exe
+```
+
+Use the `Build Customer Windows Installer` workflow from the Actions tab, or push to `main`.

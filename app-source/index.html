@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Group Messenger</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-box">
+            <div class="login-header">
+                <span class="login-logo"></span>
+                <h1>Login</h1>
+                <p>Telegram Group Messenger Pro</p>
+            </div>
+            <div class="form-group">
+                <label for="loginUsername">Username</label>
+                <input type="text" id="loginUsername" placeholder="Enter username" />
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" />
+            </div>
+            <button id="loginBtn" class="btn btn-primary">Login</button>
+            <p id="loginError" class="login-error" style="display: none;"> Incorrect username or password</p>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Global Top Menu -->
+        <div class="global-menu">
+            <div class="menu-left">
+                <span class="menu-item" id="menuFile">File</span>
+                <span class="menu-item" id="menuView">View</span>
+                <span class="menu-item" id="menuAbout">About</span>
+            </div>
+            <div class="menu-right">
+                <button id="openSettingsBtn" class="menu-icon-btn" title="Settings"> Settings</button>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="title-area">
+                    <h1> Telegram Group Messenger</h1>
+                    <p class="subtitle">Professional messaging automation with rate limiting</p>
+                </div>
+                <div id="demoBanner" class="demo-banner" style="display: none;"></div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel: Configuration -->
+            <div class="config-panel">
+                <div class="panel-section">
+                    <h2> Configuration</h2>
+
+                    <!-- Telegram API Credentials -->
+                    <div class="form-group">
+                        <label for="accountSelect">Telegram Account</label>
+                        <div class="account-row">
+                            <select id="accountSelect" class="account-select"></select>
+                            <button id="newAccountBtn" class="btn btn-secondary btn-small" type="button">New</button>
+                            <button id="duplicateAccountBtn" class="btn btn-secondary btn-small" type="button">Duplicate</button>
+                            <button id="saveAccountBtn" class="btn btn-secondary btn-small" type="button">Save</button>
+                            <button id="deleteAccountBtn" class="btn btn-secondary btn-small" type="button">Delete</button>
+                            <button id="clearSessionBtn" class="btn btn-secondary btn-small" type="button">Clear Session</button>
+                        </div>
+                        <div class="hint-text">Each account has its own Telegram session.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-with-help">
+                            <label for="apiId">API ID</label>
+                            <span id="showGuidanceBtn" class="help-circle">?</span>
+                        </div>
+                        <input type="text" id="apiId" placeholder="Your Telegram API ID" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apiHash">API Hash</label>
+                        <input type="text" id="apiHash" placeholder="Your Telegram API Hash" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="text" id="phoneNumber" placeholder="+1XXXXXXXXXX" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="authMethod">Login Method</label>
+                        <select id="authMethod">
+                            <option value="qr">QR Code (recommended)</option>
+                            <option value="code">SMS/Telegram Code</option>
+                        </select>
+                        <div class="hint-text">Use QR to approve login from your phone without typing codes.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">2FA Password (if enabled)</label>
+                        <input type="password" id="password" placeholder="Your 2FA password" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Proxy (optional, per account)</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="accProxyHost">Host</label>
+                                <input type="text" id="accProxyHost" placeholder="e.g. 1.2.3.4" />
+                            </div>
+                            <div class="form-group" style="width: 100px;">
+                                <label for="accProxyPort">Port</label>
+                                <input type="text" id="accProxyPort" placeholder="1080" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="accProxyUser">Username</label>
+                                <input type="text" id="accProxyUser" placeholder="Optional" />
+                            </div>
+                            <div class="form-group">
+                                <label for="accProxyPass">Password</label>
+                                <input type="password" id="accProxyPass" placeholder="Optional" />
+                            </div>
+                        </div>
+                        <div class="hint-text">SOCKS5 proxy (recommended). Leave empty to disable.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quiet Hours (optional, per account)</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quietStart">Start</label>
+                                <input type="time" id="quietStart" />
+                            </div>
+                            <div class="form-group">
+                                <label for="quietEnd">End</label>
+                                <input type="time" id="quietEnd" />
+                            </div>
+                        </div>
+                        <div class="hint-text">If set, no messages will be sent during this time window (local time).</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rate Limit Safety (per account)</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="betweenGroupsMin">Between Groups Min (s)</label>
+                                <input type="number" id="betweenGroupsMin" min="0" step="0.1" value="5" />
+                            </div>
+                            <div class="form-group">
+                                <label for="betweenGroupsMax">Between Groups Max (s)</label>
+                                <input type="number" id="betweenGroupsMax" min="0" step="0.1" value="10" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="preSendMin">Pre-send Min (s)</label>
+                                <input type="number" id="preSendMin" min="0" step="0.1" value="2" />
+                            </div>
+                            <div class="form-group">
+                                <label for="preSendMax">Pre-send Max (s)</label>
+                                <input type="number" id="preSendMax" min="0" step="0.1" value="5" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postSendMin">Post-send Min (s)</label>
+                                <input type="number" id="postSendMin" min="0" step="0.1" value="3" />
+                            </div>
+                            <div class="form-group">
+                                <label for="postSendMax">Post-send Max (s)</label>
+                                <input type="number" id="postSendMax" min="0" step="0.1" value="7" />
+                            </div>
+                        </div>
+                        <div class="hint-text">Bigger delays reduce ban risk but slow delivery.</div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button id="exportAccountsBtn" class="btn btn-secondary btn-small" type="button">Export Accounts</button>
+                        <button id="importAccountsBtn" class="btn btn-secondary btn-small" type="button">Import Accounts</button>
+                        <button id="openLogsBtn" class="btn btn-secondary btn-small" type="button">Open Logs Folder</button>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button id="connectAccountBtn" class="btn btn-secondary" type="button">
+                            <span class="btn-icon"></span>
+                            Connect / Login
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2> Message</h2>
+                    <div class="form-group">
+                        <label for="message">Message to send</label>
+                        <textarea id="message" rows="6" placeholder="Type your message here..."></textarea>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="form-group">
+                        <label>Attach Image (optional)</label>
+                        <div class="image-upload-container">
+                            <input type="file" id="imageInput" accept="image/*" style="display: none;" />
+                            <button id="selectImageBtn" class="btn btn-secondary btn-small">
+                <span class="btn-icon"></span> Select Image
+                            </button>
+                            <button id="clearImageBtn" class="btn btn-secondary btn-small" style="display: none;">
+                <span class="btn-icon"></span> Remove
+                            </button>
+                        </div>
+                        <div id="imagePreview" class="image-preview" style="display: none;">
+                            <img id="previewImg" src="" alt="Preview" />
+                            <span id="imageName"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2> Scheduling Settings</h2>
+
+                    <div class="form-group">
+                        <label>Send Frequency</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                <input type="radio" name="scheduleType" value="daily" checked />
+                <span>Times per day</span>
+                            </label>
+                            <label class="radio-label">
+                <input type="radio" name="scheduleType" value="interval" />
+                <span>Hours between messages</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="dailyFrequencyGroup">
+                        <label for="timesPerDay">Frequency (times per day)</label>
+                        <input type="number" id="timesPerDay" min="1" max="24" value="1" />
+                    </div>
+
+                    <div class="form-group" id="intervalGroup" style="display: none;">
+                        <label for="intervalHours">Interval (hours)</label>
+                        <input type="number" id="intervalHours" min="0.5" max="24" step="0.5" value="1" />
+                    </div>
+                </div>
+
+                <!-- Keyword Monitor (Premium) -->
+                <div class="panel-section">
+                    <h2> Keyword Monitor (Premium)</h2>
+
+                    <div class="form-group">
+                        <label for="keywordList">Keywords (one per line)</label>
+                        <textarea id="keywordList" rows="5" placeholder="sne&#10;milk&#10;iphone"></textarea>
+                        <div class="hint-text">Monitors only the groups you have scanned and selected. No auto-posting.</div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button id="startKeywordMonitorBtn" class="btn btn-secondary">
+                            <span class="btn-icon"></span>
+                            Start Monitor
+                        </button>
+                        <button id="stopKeywordMonitorBtn" class="btn btn-danger" disabled>
+                            <span class="btn-icon"></span>
+                            Stop Monitor
+                        </button>
+                    </div>
+
+                    <div id="keywordMonitorStatus" class="bot-plugin-status" style="display: none;">
+                        <div class="status-indicator">
+                            <span id="keywordMonitorIndicator"></span>
+                            <span id="keywordMonitorStatusText">Stopped</span>
+                        </div>
+                        <div class="hint-text"><span id="keywordMonitorLeadCount">0</span> leads captured. CSV updates every 10 minutes.</div>
+                    </div>
+
+                    <div id="keywordMonitorLogs" class="bot-plugin-logs" style="display: none;">
+                        <h4>Keyword Monitor Activity</h4>
+                        <div id="keywordMonitorLogOutput" class="log-container"></div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-buttons">
+                    <button id="startBtn" class="btn btn-primary">
+                        <span class="btn-icon"></span>
+                        Start Sending
+                    </button>
+                    <button id="stopBtn" class="btn btn-danger" disabled>
+                        <span class="btn-icon"></span>
+                        Stop
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Groups & Logs -->
+            <div class="content-panel">
+                <!-- Groups Input -->
+                <div class="panel-section">
+                    <h2> Telegram Groups</h2>
+
+                    <!-- Scan Groups Button -->
+                    <div class="form-group">
+                        <button id="scanGroupsBtn" class="btn btn-secondary">
+                            <span class="btn-icon" id="scanIcon"></span>
+                            <span id="scanBtnText">Scan My Groups</span>
+                            <span id="scanSpinner" class="spinner" style="display: none;"></span>
+                        </button>
+                        <p class="help-text">Automatically scan all groups you are a member of</p>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="scanningIndicator" class="scanning-indicator" style="display: none;">
+                        <div class="scanning-spinner"></div>
+                        <span id="scanningText">Scanning groups...</span>
+                    </div>
+
+                    <!-- Scanned Groups List -->
+                    <div id="scannedGroupsContainer" style="display: none;">
+                        <div class="form-group">
+                            <label>Scanned Groups (select ones to use)</label>
+                            <div class="select-all-container">
+                <input type="checkbox" id="selectAllGroups" />
+                <label for="selectAllGroups">Select All</label>
+                            </div>
+                            <div id="scannedGroupsList" class="groups-list"></div>
+                            <div class="selected-count">
+                <span id="selectedCount">0</span> groups selected
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Links Input -->
+                    <div id="manualLinksContainer">
+                        <div class="form-group">
+                            <label for="groupLinks">Or enter group links manually (one per line)</label>
+                            <textarea id="groupLinks" rows="15"
+                placeholder="https://t.me/group1&#10;https://t.me/+invitehash&#10;https://t.me/group2"></textarea>
+                            <div class="link-count">
+                <span id="linkCount">0</span> groups found
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status & Stats -->
+                <div class="panel-section">
+                    <h2> Status</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="sentCount">0</div>
+                            <div class="stat-label">Sent</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="failedCount">0</div>
+                            <div class="stat-label">Failed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalCount">0</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statusIndicator"></div>
+                            <div class="stat-label">Status</div>
+                        </div>
+                    </div>
+
+                    <div id="runningAccountsPanel" style="margin-top: 16px;">
+                        <h3 style="margin: 0 0 10px 0;">Running Accounts</h3>
+                        <div class="control-buttons" style="margin-bottom: 10px;">
+                            <button id="stopAllBtn" class="btn btn-danger btn-small" type="button">Stop All</button>
+                        </div>
+                        <div id="runningAccountsList" class="hint-text">No accounts running.</div>
+                    </div>
+                </div>
+
+                <!-- Logs -->
+                <div class="panel-section">
+                    <h2> Log</h2>
+                    <div class="log-container">
+                        <div id="logOutput"></div>
+                    </div>
+                    <button id="clearLogBtn" class="btn btn-secondary btn-small">Clear Log</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content settings-content">
+            <div class="modal-header">
+                <h3> Settings</h3>
+                <span id="closeSettingsModal" class="close-btn">&times;</span>
+            </div>
+
+            <div class="settings-tabs">
+                <div class="settings-section">
+                    <h4>Appearance</h4>
+                    <div class="form-group">
+                        <label>Theme</label>
+                        <div class="theme-switch">
+                            <label class="radio-label">
+                <input type="radio" name="theme" value="dark" checked>
+                <span>Dark Mode</span>
+                            </label>
+                            <label class="radio-label">
+                <input type="radio" name="theme" value="light">
+                <span>Light Mode</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Proxy Configuration</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Server</label>
+                            <input type="text" id="proxyHost" placeholder="e.g. 1.2.3.4">
+                        </div>
+                        <div class="form-group" style="width: 100px;">
+                            <label>Port</label>
+                            <input type="text" id="proxyPort" placeholder="8080">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="proxyUser" placeholder="Optional">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="proxyPass" placeholder="Optional">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Updates</h4>
+                    <div class="form-group">
+                        <button id="btn-check-updates" class="btn btn-secondary btn-small">Check for Updates</button>
+                        <button id="btn-download-update" class="btn btn-secondary btn-small" style="display:none;">Download</button>
+                        <button id="btn-install-update" class="btn btn-primary btn-small" style="display:none;">Install & Restart</button>
+                        <div class="hint-text" id="updateStatusText">Status: idle</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="saveSettingsBtn" class="btn btn-primary">Save All Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Input Modal -->
+    <div id="codeModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3> Confirmation Code</h3>
+            <p>Enter the code you received on your Telegram app:</p>
+            <input type="text" id="codeInput" placeholder="12345" maxlength="10" />
+            <div class="modal-buttons">
+                <button id="submitCodeBtn" class="btn btn-primary">Send Code</button>
+                <button id="cancelCodeBtn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Input Modal -->
+    <div id="passwordModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3> 2FA Password</h3>
+            <p>Enter your 2FA password:</p>
+            <input type="password" id="twoFaInput" placeholder="Your password" />
+            <div class="modal-buttons">
+                <button id="submitPasswordBtn" class="btn btn-primary">Send Password</button>
+                <button id="cancelPasswordBtn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Login Modal -->
+    <div id="qrModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3> QR Login</h3>
+            <p>Open Telegram on your phone and scan this QR code to approve login:</p>
+            <img id="qrImage" src="" alt="QR Code"
+                style="max-width: 260px; width: 100%; height: auto; background: #fff; padding: 10px; border-radius: 10px;" />
+            <div class="modal-buttons">
+                <button id="cancelQrBtn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Updating Modal -->
+    <div id="updatingModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Updating</h3>
+            <p id="updatingText">Downloading update...</p>
+            <div class="progress-bar" style="display:block; margin-top: 10px;">
+                <div id="updatingProgress" class="progress-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Guidance Modal -->
+    <div id="guidanceModal" class="modal" style="display: none;">
+        <div class="modal-content guidance-content">
+            <h3> How to find your API ID and Hash?</h3>
+            <div class="guidance-steps">
+                <div class="step">
+                    <span class="step-num">1</span>
+                    <p>Go to <a href="#"
+                            onclick="require('electron').shell.openExternal('https://my.telegram.org')">my.telegram.org</a>
+                        and login with your phone number.</p>
+                </div>
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <p>Click on <strong>"API development tools"</strong>.</p>
+                </div>
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <p>Create a new application (use any name, e.g., "MyMessenger").</p>
+                </div>
+                <div class="step">
+                    <span class="step-num">4</span>
+                    <p>Copy your <strong>App api_id</strong> and <strong>App api_hash</strong> and paste them into the
+                        app.</p>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="closeGuidanceBtn" class="btn btn-primary">I understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Confirmation Modal -->
+    <div id="saveConfirmModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3> Save Information?</h3>
+            <p>Would you like to save your configuration and message for next time?</p>
+            <div class="modal-buttons" style="flex-direction: column; gap: 10px;">
+                <button id="saveAndCloseBtn" class="btn btn-primary" style="width: 100%;">SAVE and EXIT</button>
+                <button id="justCloseBtn" class="btn btn-secondary" style="width: 100%;">EXIT WITHOUT SAVING</button>
+                <button id="cancelCloseBtn" class="btn btn-secondary btn-small" style="width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Modal -->
+    <div id="setup-modal" class="modal" style="display: none;">
+        <div class="modal-content setup-content">
+            <div class="setup-header">
+                <h2>First-Time Setup</h2>
+            </div>
+
+            <!-- Step 1: Environment -->
+            <div id="step-env" class="setup-step">
+                <div class="status-icon" id="env-icon"></div>
+                <h3>Scanning System...</h3>
+                <p id="env-status-text">Checking Python installation...</p>
+                <div class="progress-bar hidden" id="env-progress">
+                    <div class="progress-fill"></div>
+                </div>
+                <button id="btn-install-deps" class="primary-btn hidden">Install Dependencies</button>
+                <button id="btn-next-step" class="primary-btn hidden">Next</button>
+            </div>
+
+            <!-- Step 2: API Helper -->
+            <div id="step-api" class="setup-step hidden">
+                <h3>Find API ID & Hash</h3>
+                <p>We can help you find your Telegram API keys automatically using the tool below.</p>
+
+                <div class="api-fetcher-box">
+                    <div class="input-group">
+                        <label>Phone Number (including country code)</label>
+                        <input type="text" id="fetcher-phone" placeholder="+1234567890">
+                    </div>
+
+                    <div id="fetcher-logs" class="console-output small-console"></div>
+
+                    <div id="fetcher-input-area" class="input-group hidden">
+                        <label id="fetcher-input-label">Enter Code</label>
+                        <div class="row">
+                            <input type="text" id="fetcher-input-code" placeholder="12345">
+                            <button id="btn-submit-fetcher" class="primary-btn">Submit</button>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button id="btn-start-fetcher" class="primary-btn">Start Auto-Finder</button>
+                        <button id="btn-skip-setup" class="text-btn">Skip (I already have API keys)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+
+</html>

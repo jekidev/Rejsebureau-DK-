@@ -1,0 +1,36 @@
+{
+  "appId": "com.telegramgroupmessenger.app.demo",
+  "productName": "Telegram Group Messenger Demo",
+  "directories": {
+    "output": "dist-demo"
+  },
+  "win": {
+    "target": "nsis",
+    "icon": "assets/icon.ico"
+  },
+  "nsis": {
+    "include": "installer.nsh",
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "installerIcon": "assets/icon.ico",
+    "uninstallerIcon": "assets/icon.ico"
+  },
+  "files": [
+    "**/*",
+    "!node_modules/**/*",
+    "!dist/**/*",
+    "!dist-demo/**/*",
+    "!_vendor/**/*",
+    "!data/**/*"
+  ],
+  "asarUnpack": [
+    "requirements.txt",
+    "backend/*.py"
+  ],
+  "extraMetadata": {
+    "edition": "demo",
+    "demoMode": true,
+    "demoMinutes": 15,
+    "accountLimit": 1
+  }
+}

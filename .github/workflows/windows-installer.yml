@@ -1,0 +1,47 @@
+name: Build Customer Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: app-source/package-lock.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Node dependencies
+        working-directory: app-source
+        run: npm install
+
+      - name: Build Windows setup wizard
+        working-directory: app-source
+        run: npm run build:win
+
+      - name: Normalize installer name
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path "app-source/dist-premium" -Filter "*.exe" | Select-Object -First 1
+          if (-not $exe) { throw "No installer .exe was produced." }
+          Copy-Item -LiteralPath $exe.FullName -Destination "app-source/dist-premium/Telegram_Group_Messenger_Premium_Setup.exe" -Force
+
+      - name: Upload customer installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Telegram-Group-Messenger-Premium-Customer-Installer
+          path: app-source/dist-premium/Telegram_Group_Messenger_Premium_Setup.exe

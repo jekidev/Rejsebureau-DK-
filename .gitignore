@@ -1,0 +1,7 @@
+app-source/node_modules/
+app-source/dist/
+app-source/dist-demo/
+app-source/dist-premium/
+app-source/data/
+app-source/_vendor/
+*.log
