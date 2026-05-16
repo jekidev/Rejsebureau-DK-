@@ -1,0 +1,13 @@
+{
+  "appName": "Telegram Group Messenger Premium",
+  "appVersion": "4.0.0",
+  "publisher": "JekiDev",
+  "mainExe": "TelegramSuitePro.exe",
+  "sourceDir": "app-source",
+  "outputName": "Telegram_Group_Messenger_Premium_Setup.exe",
+  "installMode": "per-user",
+  "createStartMenuShortcut": true,
+  "createDesktopShortcutOption": true,
+  "licenseGate": "disabled-temporarily",
+  "encoding": "utf-8"
+}
