@@ -61,6 +61,14 @@ class TelegramMessenger extends EventEmitter {
             reject(err);
           }
         };
+        const resetInitTimer = (message, timeoutMs) => {
+          if (initTimer) clearTimeout(initTimer);
+          initTimer = setTimeout(() => {
+            this.emit('error', { message });
+            try { this.pythonProcess?.kill(); } catch (e) { }
+            rejectOnce(new Error(message));
+          }, timeoutMs);
+        };
 
         // Handle Python output
         this.pythonProcess.stdout.on('data', (data) => {
@@ -70,16 +78,19 @@ class TelegramMessenger extends EventEmitter {
               const output = JSON.parse(line);
               this.handlePythonOutput(output);
 
-              // Resolve when we get groups_scanned or when connected successfully
+              if (output.type === 'error' && !initResolved) {
+                rejectOnce(new Error(output.data?.message || 'Telegram initialization failed'));
+                return;
+              }
+
+              if (output.type === 'status' && (output.data?.needsCode || output.data?.needsPassword)) {
+                resetInitTimer('Authorization timed out while waiting for code or 2FA password', 5 * 60 * 1000);
+              }
+
+              // Resolve when we get groups_scanned or when connected successfully.
               if (output.type === 'groups_scanned' ||
                 (output.type === 'log' && output.data && output.data.message &&
                   output.data.message.includes('Connected'))) {
-                resolveOnce();
-              }
-
-              // Also resolve as soon as we're waiting for user input (code/2FA),
-              // so the UI can prompt without hitting the timeout.
-              if (output.type === 'status' && (output.data?.needsCode || output.data?.needsPassword)) {
                 resolveOnce();
               }
             } catch (e) {
@@ -105,6 +116,11 @@ class TelegramMessenger extends EventEmitter {
             lowerMsg.includes('*********')) { // Progress bars or dividers
             // Treat as log, or ignore
             this.emit('log', { type: 'debug', message: `System: ${errorMsg}` });
+          } else if (/AuthRestartError/i.test(errorMsg)) {
+            this.emit('log', {
+              type: 'warning',
+              message: 'Telegram requested an auth restart. Continue with the newest code Telegram sends.'
+            });
           } else if (/Attempt\s+\d+\s+at connecting failed:/i.test(errorMsg)) {
             // Telethon connection retries often go to stderr; do not treat as fatal.
             this.emit('log', { type: 'warning', message: trimmed || errorMsg });
@@ -151,11 +167,7 @@ class TelegramMessenger extends EventEmitter {
 
         // Timeout: only resolve on known-good signals (connected / needs input / groups scanned).
         // If none arrives, treat as a failure (otherwise the app will start "sending" while not connected).
-        initTimer = setTimeout(() => {
-          this.emit('error', { message: 'Initialization timed out (30s) while connecting to Telegram' });
-          try { this.pythonProcess?.kill(); } catch (e) { }
-          rejectOnce(new Error('Initialization timed out (30s) while connecting to Telegram'));
-        }, 30000);
+        resetInitTimer('Initialization timed out (30s) while connecting to Telegram', 30000);
 
       } catch (error) {
         this.emit('error', { message: `Initialization error: ${error.message}` });

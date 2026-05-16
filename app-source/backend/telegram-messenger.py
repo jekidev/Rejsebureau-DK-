@@ -216,6 +216,11 @@ class TelegramMessenger:
                     await self.client.sign_in(password=password)
 
             self.send_output('log', {'type': 'success', 'message': 'Connected to Telegram successfully'})
+
+            if self.config.get('connectOnly', False):
+                self.send_output('status', {'running': False, 'authorized': True})
+                await self.client.disconnect()
+                return True
             
             # Check if we should scan groups or use provided links
             if self.config.get('scanGroups', False):

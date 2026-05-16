@@ -149,6 +149,12 @@ async function startMessagingInternal(config, { fromQueue } = {}) {
       return { success: false, error: 'Messenger initialization failed' };
     }
 
+    if (connectOnly) {
+      sendToRenderer('log-update', { sessionName, type: 'success', message: 'Account connected and session saved.' });
+      await stopAndRemove(messengers, sessionName);
+      return { success: true, connected: true };
+    }
+
     sendToRenderer('log-update', { sessionName, type: 'info', message: 'Starter besked-sending...' });
     await m.start();
 

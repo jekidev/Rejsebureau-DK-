@@ -1,6 +1,6 @@
 {
   "name": "telegram-group-messenger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Professional Telegram Group Message Sender with Rate Limiting",
   "main": "main.js",
   "scripts": {
@@ -34,7 +34,6 @@
       "icon": "assets/icon.ico"
     },
     "nsis": {
-      "include": "installer.nsh",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "installerIcon": "assets/icon.ico",
