@@ -1,6 +1,6 @@
 {
   "name": "telegram-group-messenger",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Professional Telegram Group Message Sender with Rate Limiting",
   "main": "main.js",
   "scripts": {

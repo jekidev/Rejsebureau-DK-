@@ -359,6 +359,21 @@ document.getElementById('btn-next-step').addEventListener('click', () => {
     document.getElementById('step-api').classList.remove('hidden');
 });
 
+function openApiFinder() {
+    const setupModal = document.getElementById('setup-modal');
+    const envStep = document.getElementById('step-env');
+    const apiStep = document.getElementById('step-api');
+    const fetcherPhone = document.getElementById('fetcher-phone');
+
+    if (fetcherPhone && phoneNumberInput?.value?.trim()) {
+        fetcherPhone.value = phoneNumberInput.value.trim();
+    }
+
+    if (envStep) envStep.classList.add('hidden');
+    if (apiStep) apiStep.classList.remove('hidden');
+    if (setupModal) setupModal.style.display = 'flex';
+}
+
 function addFetcherLog(msg, type = 'info') {
     const logs = document.getElementById('fetcher-logs');
     const p = document.createElement('div');
@@ -967,6 +982,11 @@ function setupEventListeners() {
         openLogsBtn.addEventListener('click', async () => {
             try { await ipcRenderer.invoke('open-logs-folder'); } catch (e) { }
         });
+    }
+
+    const openApiFinderBtn = document.getElementById('openApiFinderBtn');
+    if (openApiFinderBtn) {
+        openApiFinderBtn.addEventListener('click', openApiFinder);
     }
 
     // Scan groups button
