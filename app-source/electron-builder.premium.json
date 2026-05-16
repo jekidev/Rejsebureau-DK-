@@ -14,7 +14,9 @@
     "allowElevation": false,
     "allowToChangeInstallationDirectory": true,
     "installerIcon": "assets/icon.ico",
-    "uninstallerIcon": "assets/icon.ico"
+    "uninstallerIcon": "assets/icon.ico",
+    "runAfterFinish": false,
+    "deleteAppDataOnUninstall": false
   },
   "files": [
     "**/*",
