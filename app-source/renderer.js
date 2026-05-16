@@ -604,7 +604,7 @@ function readInputsToAccount(acc) {
         apiHash: apiHashInput.value.trim(),
         phoneNumber: phoneNumberInput.value.trim(),
         authMethod: (authMethodEl?.value || 'qr'),
-        password: passwordInput.value.trim()
+        password: passwordInput.value
         ,
         proxyHost: (ph?.value || '').trim(),
         proxyPort: (pp?.value || '').trim(),
@@ -1001,7 +1001,7 @@ function setupEventListeners() {
                 apiId: apiIdInput.value.trim(),
                 apiHash: apiHashInput.value.trim(),
                 phoneNumber: phoneNumberInput.value.trim(),
-                password: passwordInput.value.trim(),
+                password: passwordInput.value,
                 sessionName,
                 authMethod: (document.getElementById('authMethod')?.value || 'qr'),
                 proxy: getProxyConfigFromInputs(),
@@ -1383,7 +1383,7 @@ async function scanGroups() {
         apiId: apiIdInput.value.trim(),
         apiHash: apiHashInput.value.trim(),
         phoneNumber: phoneNumberInput.value.trim(),
-        password: passwordInput.value.trim(),
+        password: passwordInput.value,
         sessionName: scanningSessionName,
         authMethod: (document.getElementById('authMethod')?.value || 'qr'),
         proxy: getProxyConfigFromInputs(),
@@ -1500,7 +1500,7 @@ async function startMessaging() {
         apiId: apiIdInput.value.trim(),
         apiHash: apiHashInput.value.trim(),
         phoneNumber: phoneNumberInput.value.trim(),
-        password: passwordInput.value.trim(),
+        password: passwordInput.value,
         sessionName,
         authMethod: (document.getElementById('authMethod')?.value || 'qr'),
         proxy: getProxyConfigFromInputs(),
@@ -1679,7 +1679,7 @@ function showPasswordModal() {
     input.focus();
 
     const handleSubmit = async () => {
-        const password = input.value.trim();
+        const password = input.value;
         if (password) {
             try {
                 addLog('info', 'Sending 2FA password...');

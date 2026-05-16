@@ -11,7 +11,7 @@ import os
 import io
 from pathlib import Path
 from telethon import TelegramClient
-from telethon.errors import FloodWaitError, SessionPasswordNeededError
+from telethon.errors import FloodWaitError, PasswordHashInvalidError, SessionPasswordNeededError
 import re
 import hashlib
 
@@ -206,14 +206,23 @@ class TelegramMessenger:
                 try:
                     await self.client.sign_in(phone, code)
                 except SessionPasswordNeededError:
-                    password = self.config.get('password', '')
-                    if not password:
-                        self.send_output('log', {'type': 'info', 'message': '2FA password required'})
-                        self.send_output('status', {'needsPassword': True, 'running': False})
-                        password = sys.stdin.readline().strip()
+                    password = self.config.get('password') or ''
+                    while True:
                         if not password:
-                            raise Exception('No 2FA password provided')
-                    await self.client.sign_in(password=password)
+                            self.send_output('log', {'type': 'info', 'message': '2FA password required'})
+                            self.send_output('status', {'needsPassword': True, 'running': False})
+                            password = sys.stdin.readline().rstrip('\r\n')
+                            if not password:
+                                raise Exception('No 2FA password provided')
+                        try:
+                            await self.client.sign_in(password=password)
+                            break
+                        except PasswordHashInvalidError:
+                            self.send_output('log', {'type': 'error', 'message': '2FA password was rejected. Please try again.'})
+                            self.send_output('status', {'needsPassword': True, 'running': False, 'retry': True})
+                            password = sys.stdin.readline().rstrip('\r\n')
+                            if not password:
+                                raise Exception('No 2FA password provided')
 
             self.send_output('log', {'type': 'success', 'message': 'Connected to Telegram successfully'})
 
