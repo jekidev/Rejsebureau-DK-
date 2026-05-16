@@ -236,7 +236,6 @@ class TelegramMessenger extends EventEmitter {
       this.pythonProcess = null;
     }
     this.emit('status', { running: false, stats: this.stats });
-    this.emit('log', { type: 'info', message: 'Messaging stopped' });
   }
 
   isRunning() {

@@ -566,10 +566,6 @@ function applyAccountToInputs(acc) {
     if (pu) pu.value = acc.proxyUser || '';
     if (pw) pw.value = acc.proxyPass || '';
 
-    const quietStart = document.getElementById('quietStart');
-    const quietEnd = document.getElementById('quietEnd');
-    if (quietStart) quietStart.value = acc.quietStart || '';
-    if (quietEnd) quietEnd.value = acc.quietEnd || '';
 
     const bgMin = document.getElementById('betweenGroupsMin');
     const bgMax = document.getElementById('betweenGroupsMax');
@@ -595,8 +591,6 @@ function readInputsToAccount(acc) {
     const pu = document.getElementById('accProxyUser');
     const pw = document.getElementById('accProxyPass');
 
-    const quietStart = document.getElementById('quietStart');
-    const quietEnd = document.getElementById('quietEnd');
 
     const bgMin = document.getElementById('betweenGroupsMin');
     const bgMax = document.getElementById('betweenGroupsMax');
@@ -616,8 +610,6 @@ function readInputsToAccount(acc) {
         proxyPort: (pp?.value || '').trim(),
         proxyUser: (pu?.value || '').trim(),
         proxyPass: (pw?.value || '').trim(),
-        quietStart: (quietStart?.value || '').trim(),
-        quietEnd: (quietEnd?.value || '').trim(),
         betweenGroupsMin: Number(bgMin?.value || 5),
         betweenGroupsMax: Number(bgMax?.value || 10),
         preSendMin: Number(preMin?.value || 2),
@@ -653,8 +645,6 @@ function getRateLimitConfigFromInputs() {
         preSendDelayMax: num('preSendMax', 5),
         postSendDelayMin: num('postSendMin', 3),
         postSendDelayMax: num('postSendMax', 7),
-        quietHoursStart: (document.getElementById('quietStart')?.value || '').trim(),
-        quietHoursEnd: (document.getElementById('quietEnd')?.value || '').trim(),
     };
 }
 

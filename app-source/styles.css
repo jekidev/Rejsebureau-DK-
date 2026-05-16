@@ -80,7 +80,8 @@ body {
 }
 
 .config-panel {
-    width: 400px;
+    width: 440px;
+    min-width: 360px;
     background: var(--bg-secondary);
     border-radius: 12px;
     padding: 25px;
@@ -166,11 +167,12 @@ textarea {
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .account-select {
-    flex: 1;
-    min-width: 160px;
+    flex: 1 0 100%;
+    min-width: 0;
 }
 
 .hint-text {
@@ -214,13 +216,15 @@ textarea {
 /* Buttons */
 .control-buttons {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     margin-top: 30px;
+    flex-wrap: wrap;
 }
 
 .btn {
-    flex: 1;
-    padding: 14px 24px;
+    flex: 1 1 120px;
+    min-width: max-content;
+    padding: 12px 16px;
     border: none;
     border-radius: 8px;
     font-size: 15px;

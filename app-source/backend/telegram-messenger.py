@@ -468,7 +468,6 @@ class TelegramMessenger:
         """Stop sending messages"""
         self.is_active = False
         self.send_output('status', {'running': False, 'stats': self.stats})
-        self.send_output('log', {'type': 'info', 'message': 'Messaging stopped'})
 
     def send_output(self, event_type, data):
         """Send output to Electron via stdout"""
